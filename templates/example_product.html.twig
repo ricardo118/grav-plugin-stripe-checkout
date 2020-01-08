@@ -1,0 +1,12 @@
+{% extends 'partials/base.html.twig' %}
+
+{% block content %}
+    {{ page.content|raw }}
+
+    €{{ page.header.price }}
+    {% include 'partials/buttons/add_to_cart.html.twig' with {sku: page.header.sku} %}
+    {% include 'partials/buttons/increase_quantity.html.twig' with {sku: page.header.sku} %}
+    {% include 'partials/buttons/decrease_quantity.html.twig' with {sku: page.header.sku} %}
+    {% include 'partials/buttons/remove_from_cart.html.twig' with {sku: page.header.sku} %}
+    {% include 'partials/buttons/checkout.html.twig' %}
+{% endblock %}

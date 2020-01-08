@@ -1,0 +1,12 @@
+{#
+This partial is the most basic setup for a redirect to checkout button that the plugin requires.
+Simply create an <a>/<button> or any other element that you want,
+with the data-redirect-to-checkout attribute.
+
+Example: add this to your product templates:
+{% include 'partials/buttons/checkout.html.twig' %}
+#}
+
+<button data-redirect-to-checkout>Checkout Now</button>
+
+{# <a href="#" data-redirect-to-checkout>Checkout Now</a> #}

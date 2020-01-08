@@ -1,0 +1,27 @@
+name: Stripe Checkout
+version: 0.1.0
+description: Simple Grav Stripe Checkout Wrapper with SCA2 support for european-selling shops
+icon: plug
+author:
+  name: ricardo
+  email: ricardo@urbansquid.london
+homepage: https://github.com/ricardo118/grav-plugin-stripe-checkout
+demo: http://demo.yoursite.com
+keywords: grav, plugin, etc
+bugs: https://github.com/ricardo118/grav-plugin-stripe-checkout/issues
+docs: https://github.com/ricardo118/grav-plugin-stripe-checkout/blob/develop/README.md
+license: MIT
+
+form:
+  validation: strict
+  fields:
+    enabled:
+      type: toggle
+      label: PLUGIN_ADMIN.PLUGIN_STATUS
+      highlight: 1
+      default: 0
+      options:
+        1: PLUGIN_ADMIN.ENABLED
+        0: PLUGIN_ADMIN.DISABLED
+      validate:
+        type: bool

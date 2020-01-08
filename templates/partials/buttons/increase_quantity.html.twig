@@ -1,0 +1,15 @@
+{#
+This partial is the most basic setup for a increase quantity button that the plugin requires.
+Simply create an <a> or any other element that you want,
+with the data-item-sku="insert your stripe sku here" AND data-increase-quantity
+
+Options:
+data-increase-quantity="4" an optional quantity to increase by can be added to the data. Defaults to 1.
+
+Example: add this to your product templates:
+{% include 'partials/buttons/increase_quantity_btn.html.twig' with {sku: page.header.sku} %}
+#}
+
+<a href="" data-increase-quantity data-item-sku="{{ sku }}">+1</a>
+
+{# <a href="" data-increase-quantity="4" data-item-sku="{{ sku }}">+4</a> #}

@@ -1,0 +1,12 @@
+{#
+This partial is the most basic setup for a remove from cart button that the plugin requires.
+Simply create an <a> or any other element that you want,
+with the data-remove-from-cart="insert your stripe sku here"
+
+Example: add this to your templates:
+{% include 'partials/buttons/remove_from_cart.html.twig' with {sku: page.header.sku} %}
+#}
+
+<button data-remove-from-cart="{{ sku }}">Remove from Cart</button>
+
+{# <a href="#" data-remove-from-cart="{{ sku }}">Remove from Cart</a> #}

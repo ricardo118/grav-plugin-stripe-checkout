@@ -1,0 +1,16 @@
+{#
+This partial is the most basic setup for a decrease quantity button that the plugin requires.
+Simply create an <a> or any other element that you want,
+with the data-item-sku="insert your stripe sku here" AND data-decrease-quantity
+
+Options:
+data-decrease-quantity="4" an optional quantity to decrease by can be added to the data. Defaults to 1.
+
+Example: add this to your product templates:
+{% include 'partials/buttons/decrease_quantity_btn.html.twig' with {sku: page.header.sku} %}
+#}
+
+<a href="" data-decrease-quantity data-item-sku="{{ sku }}">-1</a>
+
+{# <a href="" data-decrease-quantity="4" data-item-sku="{{ sku }}">-4</a> #}
+
