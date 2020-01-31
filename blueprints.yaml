@@ -7,7 +7,7 @@ author:
   email: ricardo@urbansquid.london
 homepage: https://github.com/ricardo118/grav-plugin-stripe-checkout
 demo: http://demo.yoursite.com
-keywords: grav, plugin, etc
+keywords: grav, plugin, stripe, cart, shop, commerce, gdpr, sca, sca2, checkout, shopping, ecom, ecommerce
 bugs: https://github.com/ricardo118/grav-plugin-stripe-checkout/issues
 docs: https://github.com/ricardo118/grav-plugin-stripe-checkout/blob/develop/README.md
 license: MIT
