@@ -1,5 +1,5 @@
 name: Stripe Checkout
-version: 0.1.0
+version: 1.1.0
 description: Simple Grav Stripe Checkout Wrapper with SCA2 support for european-selling shops
 icon: plug
 author:
