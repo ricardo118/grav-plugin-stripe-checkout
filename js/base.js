@@ -85,7 +85,11 @@
         // When the customer clicks on the button, redirect them to Checkout.
         stripe.redirectToCheckout({
 
-            items: StripeCheckout.getOrderItems(),
+            lineItems: StripeCheckout.getOrderItems(),
+            mode: 'payment',
+            shippingAddressCollection: {
+                    allowedCountries: StripeCheckout.settings.shipping_countries,
+                },
             successUrl: StripeCheckout.settings.success_url,
             cancelUrl: StripeCheckout.settings.cancel_url
 
@@ -113,10 +117,11 @@
         let items = [];
         (StripeCheckout.items).forEach(item =>
             items.push({
-                sku: item.sku,
+                price: item.sku,
                 quantity: item.quantity,
             })
         );
+
         return items;
     };
 
