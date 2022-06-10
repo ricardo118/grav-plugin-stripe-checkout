@@ -37,15 +37,17 @@
         const product = products[0];
 
         if (!product) {
-            // if no product, create one by pushing to the array
+            let product = {sku: sku, quantity: quantity};
+
             if (extras) {
                 // any extras? add them too or skip them
-                StripeCheckout.items.push({sku: sku, quantity: quantity, extras: extras});
-            } else {
-                StripeCheckout.items.push({sku: sku, quantity: quantity});
+               product.extras = extras;
             }
 
+            StripeCheckout.items.push(product);
             console.log('Added ' + quantity + ' of ' + sku);
+            window.dispatchEvent(new CustomEvent('sc-added', { detail : {'product': product, 'items': StripeCheckout.items } }));
+
         } else {
             // product exists -> update the quantity
             product.quantity = parseInt(product.quantity) + parseInt(quantity);
@@ -56,6 +58,7 @@
             }
 
             console.log('Changed quantity of ' + sku + ' by: ' + quantity);
+            window.dispatchEvent(new CustomEvent('sc-updated', { detail : {'product': product, 'items': StripeCheckout.items } }));
         }
 
         if (product && product.quantity <= 0) {
@@ -145,6 +148,7 @@
     StripeCheckout.removeProduct = function removeProduct(sku)
     {
         const index = (StripeCheckout.items).findIndex(item => item.sku === sku);
+        const product = StripeCheckout.items[index];
 
         if (index === -1) {
             console.log('Product ' + sku + ' not in cart. Nothing removed.');
@@ -154,6 +158,7 @@
         (StripeCheckout.items).splice(index, 1);
 
         console.log('Product ' + sku + ' removed.', StripeCheckout.items);
+        window.dispatchEvent(new CustomEvent('sc-removed', { detail : {'product': product, 'items': StripeCheckout.items } }));
         StripeCheckout._saveToLocalStorage();
     };
 
@@ -182,6 +187,7 @@
         localStorage.removeItem('stripe-checkout-items');
 
         console.log('Cart & local storage has been cleared');
+        window.dispatchEvent(new Event('sc-cleared'));
         StripeCheckout._saveToLocalStorage();
     };
 
