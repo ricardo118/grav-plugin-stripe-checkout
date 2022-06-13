@@ -210,6 +210,22 @@
 
 
     /***********************************************************/
+    /* Set a product quantity
+    /*
+    /* Returns a product object
+    /***********************************************************/
+    StripeCheckout.setQuantity = function setQuantity(id, quantity)
+    {
+        const product = StripeCheckout.getProduct(id);
+        product.quantity = parseInt(quantity);
+
+        window.dispatchEvent(new CustomEvent('sc-updated', { detail : {'product': product, 'items': StripeCheckout.items } }));
+        StripeCheckout._saveToLocalStorage();
+
+        return product;
+    };
+    
+    /***********************************************************/
     /* Search URL queries - Helper function
     /*
     /* A function to read URL query strings. example.com?test=blabla
