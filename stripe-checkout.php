@@ -91,10 +91,19 @@ class StripeCheckoutPlugin extends Plugin
         $assets->addJs('plugins://stripe-checkout/js/events.js');
 
         $global = "if (!window.PLUGIN_STRIPE_CHECKOUT) { window.PLUGIN_STRIPE_CHECKOUT = {}; }";
-        $json_configs = json_encode($this->configs);
-        $js = "window.PLUGIN_STRIPE_CHECKOUT.settings = {$json_configs};";
+        $js = "window.PLUGIN_STRIPE_CHECKOUT.settings = {$this->frontEndConfigs()};";
         $assets->addInlineJs($global);
         $assets->addInlineJs($js);
+    }
+
+    public function frontEndConfigs()
+    {
+        $configs = $this->configs;
+        unset($configs['stripe']['keys']['test']['secret']);
+        unset($configs['stripe']['keys']['live']['secret']);
+        unset($configs['stripe']['wh_secret']);
+        unset($configs['secret_key']);
+        return json_encode($configs);
     }
 
     public function addCheckoutPage()
