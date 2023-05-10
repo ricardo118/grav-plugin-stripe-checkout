@@ -81,25 +81,31 @@
     /* and cancel urls.
     /***********************************************************/
     StripeCheckout.goToCheckout = async function goToCheckout() {
-        console.log('goToCheckout called');
-      
-        // Send cart data to the server before redirecting to Stripe Checkout
-        StripeCheckout.sendCartData();
-      
-        const cart = StripeCheckout.items.map(item => ({
+      console.log('goToCheckout called');
+    
+      const cart = StripeCheckout.items.map(item => ({
           id: item.sku,
           name: item.extras.name,
           price: item.extras.price, // Convert dollars to cents
           quantity: item.quantity
-        }));
+      }));
       
-        try {
+      // Get the value of the comments textarea.
+      const comments = document.querySelector("#comments").value;
+  
+      // Include the comments data in the request body
+      const requestBody = {
+          cart: cart,
+          comments: comments
+      };
+    
+      try {
           const response = await fetch(StripeCheckout.settings.session_route, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(cart)
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(requestBody)
           });
           const data = await response.json();
           if (data.status === 'success') {
@@ -262,41 +268,5 @@
             }
         }
     };
-
-    /***********************************************************/
-    /* Function to send cart data to the server
-    /***********************************************************/
-    StripeCheckout.sendCartData = function sendCartData() {
-        // Convert StripeCheckout items into a cart array
-        const cart = StripeCheckout.items.map(item => ({
-          id: item.sku,
-          name: item.extras.name,
-          price: item.extras.price,
-          quantity: item.quantity
-        }));
-      
-        console.log('Cart data before sending to server:', cart);
-      
-        // Send cart items to the server.
-        fetch(StripeCheckout.settings.session_route, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(cart)
-        })
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === 'success') {
-            console.log('Cart data sent to server:', data);
-          } else {
-            // Handle errors
-            console.error('Error creating session:', data.message);
-          }
-        })
-        .catch(error => {
-          console.error('Error creating session:', error);
-        });
-      };      
 
 })(window.StripeCheckout);

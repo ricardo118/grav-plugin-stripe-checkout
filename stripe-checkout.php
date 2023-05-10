@@ -81,12 +81,20 @@ class StripeCheckoutPlugin extends Plugin
         $route = $this->config->get('plugins.stripe-checkout.session_route');
     
         if ($uri->path() === $route) {
-            error_log('path is route');
+
             // Read the cart data from the request
-            $cartData = json_decode(file_get_contents('php://input'), true);
-    
-            // Call the createCheckoutSession function with the cart data
-            $checkout_session = $this->createCheckoutSession($cartData);
+            $requestData = json_decode(file_get_contents('php://input'), true);
+
+            $checkout_session = null;
+
+            if (isset($requestData['cart'])) {
+                $cartData = $requestData['cart'];
+                $comments = $requestData['comments'] ?? '';
+                // Call the createCheckoutSession function with the cart data
+                $checkout_session = $this->createCheckoutSession($cartData, $comments);
+            } else {
+                // TODO: Handle the case when cart data is missing, which should be an issue
+            }
     
             if (isset($checkout_session->id)) {
                 $this->grav['log']->info('Checkout Session created: ' . print_r($checkout_session, true));
@@ -177,14 +185,15 @@ class StripeCheckoutPlugin extends Plugin
 
     }
 
-    public function createCheckoutSession($cartData)
+    public function createCheckoutSession($cartData, string $comments = '')
     {
         try {
             Stripe::setApiKey($this->configs['secret_key']);
     
             $line_items = [];
             $metadata = [];
-    
+            $this->grav['log']->info('comments: ' . $comments);
+
             foreach ($cartData as $index => $item) {
                 // Skip processing if the cart data has "amount" and "currency" fields
                 if (isset($item['amount'], $item['currency'])) {
@@ -203,9 +212,12 @@ class StripeCheckoutPlugin extends Plugin
                         'quantity' => $item['quantity'],
                     ];
     
-                    // Add metadata for each item directly
+                    // Add metadata for each item and comments
                     $metadata["item_{$index}_sku"] = $item['id'];
                     $metadata["item_{$index}_quantity"] = $item['quantity'];
+                    if (!empty($comments)) {
+                        $metadata["comments"] = $comments;
+                    }
                 } else {
                     // Skip the current iteration if $item is not in the expected format
                     continue;
@@ -221,7 +233,6 @@ class StripeCheckoutPlugin extends Plugin
                     'success_url' => $this->configs['success_url'],
                     'cancel_url' => $this->configs['cancel_url'],
                 ]);
-                error_log("Checkout Session ID: " . $checkout_session->id);
                 return $checkout_session;
             }
         } catch (Exception $e) {
