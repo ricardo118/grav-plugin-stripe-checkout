@@ -68,7 +68,6 @@
             return;
         }
 
-        console.log(StripeCheckout.items);
         StripeCheckout._saveToLocalStorage();
     };
 
@@ -81,32 +80,56 @@
     /* public key set in the plugin configs as well as the success
     /* and cancel urls.
     /***********************************************************/
-    StripeCheckout.goToCheckout = function goToCheckout()
-    {
-        const stripe = Stripe(StripeCheckout.settings.key);
-
-        // When the customer clicks on the button, redirect them to Checkout.
-        stripe.redirectToCheckout({
-
-            lineItems: StripeCheckout.getOrderItems(),
-            mode: 'payment',
-            shippingAddressCollection: {
-                    allowedCountries: StripeCheckout.settings.shipping_countries,
-                },
-            successUrl: StripeCheckout.settings.success_url,
-            cancelUrl: StripeCheckout.settings.cancel_url
-
-        }).then(function (result) {
-
-            if (result.error) {
+    StripeCheckout.goToCheckout = async function goToCheckout() {
+      console.log('goToCheckout called');
+    
+      const cart = StripeCheckout.items.map(item => ({
+          id: item.sku,
+          name: item.extras.name,
+          price: item.extras.price, // Convert dollars to cents
+          quantity: item.quantity
+      }));
+      
+      // Get the value of the comments textarea.
+      const comments = document.querySelector("#comments").value;
+  
+      // Include the comments data in the request body
+      const requestBody = {
+          cart: cart,
+          comments: comments
+      };
+    
+      try {
+          const response = await fetch(StripeCheckout.settings.session_route, {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(requestBody)
+          });
+          const data = await response.json();
+          if (data.status === 'success') {
+            const sessionId = data.sessionId;
+            const stripe = Stripe(StripeCheckout.settings.key);
+      
+            stripe.redirectToCheckout({ sessionId: sessionId }).then(function (result) {
+              if (result.error) {
                 // If `redirectToCheckout` fails due to a browser or network
                 // error, display the localized error message to your customer.
                 const displayError = document.getElementById('error-message');
                 displayError.textContent = result.error.message;
-            }
-
-        });
-    };
+              }
+            });
+          } else {
+            // Handle errors
+            console.error('Error creating checkout session:', data.message);
+          }
+        } catch (error) {
+          console.error('Error creating checkout session:', error);
+          const displayError = document.getElementById('error-message');
+          displayError.textContent = error.message;
+        }
+      };      
 
     /***********************************************************/
     /* Get Checkout Items - formatted for Stripe API
@@ -208,7 +231,6 @@
         StripeCheckout.addProduct(sku, quantity);
     };
 
-
     /***********************************************************/
     /* Set a product quantity
     /*
@@ -224,7 +246,7 @@
 
         return product;
     };
-    
+
     /***********************************************************/
     /* Search URL queries - Helper function
     /*

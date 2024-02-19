@@ -3,6 +3,7 @@ key: 'pk_test_xxxxxxxxxxxxxxxxxx'                                   # Your publi
 success_url: 'https://example.com/checkout?result=success'          # The return url when ur payments are successful. It can be any url you desire, handling the display is up to you.
 cancel_url: 'https://example.com/checkout?result=canceled'          # The return url when ur payments are unsuccessful. It can be any url you desire, handling the display is up to you.
 checkout_route: '/checkout'                                         # The route to add an optional checkout page
+session_route: '/create-checkout-session'
 shipping_countries:                                                 # https://www.nationsonline.org/oneworld/country_code_list.htm
   - AC
   - AD
